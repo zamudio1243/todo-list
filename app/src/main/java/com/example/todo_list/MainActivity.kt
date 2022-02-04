@@ -3,41 +3,113 @@ package com.example.todo_list
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todo_list.ui.components.ListItemView
 import com.example.todo_list.ui.theme.TodoListTheme
+import com.example.todo_list.ui.theme.getCurrentTheme
+import com.example.todo_list.view_models.TodoListViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             TodoListTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
+                TodoListScreen()
             }
         }
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    TodoListTheme {
-        Greeting("Android")
+fun TodoListScreen(
+    todoListViewModel: TodoListViewModel = viewModel()
+) {
+    var openDialog by remember {
+        mutableStateOf(false)
+    }
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                openDialog = true
+            }) {
+                Icon(Icons.Outlined.Add, contentDescription = "Add item")
+            }
+        },
+        topBar = {
+            Text(
+                modifier = Modifier.padding(start = 12.dp),
+                text = "Todo List",
+                style = MaterialTheme.typography.h4
+            )
+        }
+    ) {
+        LazyColumn(
+            modifier = Modifier.padding(start = 12.dp, end = 12.dp)
+        ) {
+            item {
+                Text(
+                    modifier = Modifier
+                        .padding(top = 18.dp, bottom = 4.dp),
+                    text = "Completed",
+                    style = MaterialTheme.typography.subtitle1,
+                    color = getCurrentTheme().completed
+                )
+            }
+            items(todoListViewModel.todoList) {
+                ListItemView(
+                    modifier = Modifier.padding(4.dp),
+                    item = it
+                )
+            }
+        }
+        if (openDialog) {
+            AlertDialog(
+                onDismissRequest = { openDialog = false },
+                title = {
+                    Text(text = "Add a new item")
+                },
+                text = {
+                    var text by remember {
+                        mutableStateOf("")
+                    }
+                    OutlinedTextField(
+                        value = text,
+                        label = {
+                            Text(text = "name")
+                        },
+                        onValueChange = {
+                            text = it
+                        }
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            openDialog = false
+                        }
+                    ) {
+                        Text("Add")
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = {
+                            openDialog = false
+                        }
+                    ) {
+                        Text("Dismiss")
+                    }
+                }
+            )
+        }
     }
 }

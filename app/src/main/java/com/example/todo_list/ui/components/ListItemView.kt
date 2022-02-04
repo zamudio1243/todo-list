@@ -1,6 +1,9 @@
 package com.example.todo_list.ui.components
 
 import android.content.res.Configuration
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -11,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.example.todo_list.data.models.Item
 import com.example.todo_list.data.models.Tag
 import com.example.todo_list.ui.theme.TodoListTheme
+import com.example.todo_list.ui.theme.getCurrentTheme
 
 
 @Composable
@@ -19,7 +23,10 @@ fun ListItemView(
     item: Item
 ){
     Card(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .clickable { /*TODO("Lanzar la actividad de info")*/ }
+            .fillMaxWidth(),
+        elevation = 4.dp
     ) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -33,8 +40,8 @@ fun ListItemView(
                 selected = isCompleted,
                 onClick = { isCompleted = !isCompleted },
                 colors = RadioButtonDefaults.colors(
-                    selectedColor = MaterialTheme.colors.primary,
-                    unselectedColor = MaterialTheme.colors.secondary
+                    selectedColor = MaterialTheme.colors.secondary,
+                    unselectedColor = getCurrentTheme().hint
                 )
             )
             Spacer(modifier = Modifier.size(8.dp))
@@ -51,6 +58,7 @@ fun ListItemView(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)

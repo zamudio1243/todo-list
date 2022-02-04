@@ -5,7 +5,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
     primary = Primary500,
@@ -42,6 +44,22 @@ fun TodoListTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composab
     } else {
         LightColorPalette
     }
+    val theme = getCurrentTheme()
+    val systemUiController = rememberSystemUiController()
+    val useDarkIcons = MaterialTheme.colors.isLight
+
+    SideEffect {
+        systemUiController.setSystemBarsColor(
+            color = Primary600,
+            darkIcons = useDarkIcons,
+
+        )
+        systemUiController.setNavigationBarColor(
+            theme.toolbar
+        )
+
+    }
+
 
 
     MaterialTheme(
@@ -61,4 +79,7 @@ interface ComposableTheme{
     val info : Color
     val warning : Color
     val danger : Color
+    val hint: Color
+    val toolbar: Color
+    val completed: Color
 }
