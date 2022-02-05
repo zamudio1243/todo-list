@@ -3,6 +3,7 @@ package com.example.todo_list
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,17 +14,23 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.todo_list.data.models.Item
 import com.example.todo_list.ui.components.ListItemView
 import com.example.todo_list.ui.theme.TodoListTheme
 import com.example.todo_list.ui.theme.getCurrentTheme
 import com.example.todo_list.view_models.TodoListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val viewModel: TodoListViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             TodoListTheme {
-                TodoListScreen()
+                TodoListScreen(todoListViewModel = viewModel)
             }
         }
     }
@@ -72,15 +79,16 @@ fun TodoListScreen(
             }
         }
         if (openDialog) {
+            var text by remember {
+                mutableStateOf("")
+            }
             AlertDialog(
                 onDismissRequest = { openDialog = false },
                 title = {
                     Text(text = "Add a new item")
                 },
                 text = {
-                    var text by remember {
-                        mutableStateOf("")
-                    }
+
                     OutlinedTextField(
                         value = text,
                         label = {
@@ -95,6 +103,9 @@ fun TodoListScreen(
                     TextButton(
                         onClick = {
                             openDialog = false
+                            todoListViewModel.addItem(
+                                Item(name = text)
+                            )
                         }
                     ) {
                         Text("Add")
