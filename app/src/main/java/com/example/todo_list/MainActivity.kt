@@ -103,9 +103,11 @@ fun TodoListScreen(
                     TextButton(
                         onClick = {
                             openDialog = false
+                            /*
                             todoListViewModel.addItem(
                                 Item(name = text)
                             )
+                             */
                         }
                     ) {
                         Text("Add")
